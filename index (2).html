@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>İbo Forma Store | Arena Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300;500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS BAŞLANGIÇ --- */
+        :root {
+            --primary: #fbbf24;       /* Altın Sarısı */
+            --bg-overlay: rgba(10, 10, 20, 0.85); /* Arka plan karartma */
+            --card-bg: rgba(30, 41, 59, 0.95);    /* Kart Rengi */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255,255,255,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-main);
+            /* STADYUM ARKA PLANI */
+            background-image: linear-gradient(var(--bg-overlay), var(--bg-overlay)), url('https://wallpaperaccess.com/full/1149755.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 2px solid var(--primary);
+            padding: 1.2rem 2rem;
+            position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 5px 30px rgba(0,0,0,0.8);
+        }
+
+        .logo {
+            font-family: 'Teko', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+        }
+        .logo span { color: var(--primary); }
+
+        .cart-btn {
+            background: var(--primary);
+            color: #0f172a;
+            padding: 10px 25px;
+            border-radius: 4px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            transition: transform 0.2s;
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+            font-family: 'Teko', sans-serif;
+            font-size: 1.2rem;
+        }
+        .cart-btn:hover { transform: scale(1.05); background: #fff; }
+        .badge { background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.9rem; font-family: sans-serif;}
+
+        /* CONTAINER */
+        .container {
+            max-width: 1400px; margin: 2rem auto; padding: 0 20px;
+            display: flex; gap: 30px;
+        }
+
+        /* SIDEBAR */
+        aside {
+            flex: 0 0 280px;
+            background: rgba(20, 20, 25, 0.9);
+            padding: 25px; border-radius: 12px;
+            height: fit-content; border: 1px solid var(--border);
+            position: sticky; top: 110px; backdrop-filter: blur(10px);
+        }
+        aside h3 { color: var(--primary); margin-bottom: 20px; font-family: 'Teko', sans-serif; font-size: 1.8rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        
+        .filter-group { margin-bottom: 20px; }
+        .filter-group label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 0.9rem; }
+        select, input {
+            width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.5); border: 1px solid #444;
+            color: white; border-radius: 6px; outline: none; font-family: 'Poppins', sans-serif;
+        }
+        select:focus, input:focus { border-color: var(--primary); }
+        .btn-reset {
+            width: 100%; padding: 12px; background: #dc2626; color: white; border: none;
+            border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 10px; font-family: 'Teko', sans-serif; font-size: 1.2rem;
+        }
+
+        /* GRID */
+        main { flex: 1; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
+
+        /* KART TASARIMI */
+        .card {
+            background: var(--card-bg); border-radius: 12px; overflow: hidden;
+            border: 1px solid var(--border); display: flex; flex-direction: column;
+            transition: all 0.3s ease; position: relative;
+        }
+        .card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 15px 40px rgba(0,0,0,0.7); }
+
+        /* Resim Alanı */
+        .img-wrap {
+            height: 280px; background: #1a1a1a; display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden; border-bottom: 1px solid #333;
+        }
+        .card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .card:hover .card-img { transform: scale(1.1); }
+        
+        .season-badge {
+            position: absolute; top: 10px; right: 10px; background: var(--primary); color: black;
+            font-weight: 800; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; z-index: 2;
+        }
+
+        .card-body { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
+        .team-tag { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 5px; }
+        .card-title { font-size: 1.15rem; font-weight: 600; margin: 0 0 10px 0; line-height: 1.3; color: white; }
+        .size-list { display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap; }
+        .size-badge { font-size: 0.75rem; border: 1px solid #555; padding: 3px 8px; border-radius: 4px; color: #ccc; }
+        .card-price { font-size: 1.4rem; font-weight: 700; color: var(--primary); margin-top: auto; font-family: 'Teko', sans-serif; }
+
+        .btn-add {
+            width: 100%; margin-top: 15px; padding: 12px; background: white; color: black;
+            border: none; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.2s;
+            font-family: 'Teko', sans-serif; font-size: 1.2rem; letter-spacing: 1px;
+        }
+        .btn-add:hover { background: var(--primary); }
+
+        /* MODAL */
+        .overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none;
+            justify-content: center; align-items: center; z-index: 200;
+        }
+        .modal {
+            background: #1e293b; width: 95%; max-width: 600px; padding: 30px;
+            border-radius: 12px; border: 1px solid var(--primary); max-height: 80vh; overflow-y: auto;
+        }
+        .cart-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #0f172a; padding: 15px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #334155;
+        }
+        .btn-link { text-decoration: none; background: #22c55e; color: white; padding: 8px 15px; border-radius: 4px; font-size: 0.9rem; margin-right: 10px; font-weight: bold; }
+        .btn-del { background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+
+        @media (max-width: 900px) { .container { flex-direction: column; } aside { width: 100%; position: relative; top: 0; } }
+    </style>
+</head>
+<body><header>
+        <div class="logo">İBO<span>STORE</span></div>
+        <button class="cart-btn" onclick="toggleCart()">
+            SEPETİM <span class="badge" id="cartBadge">0</span>
+        </button>
+    </header>
+
+    <div class="container">
+        <aside>
+            <h3>MAĞAZA FİLTRELERİ</h3>
+            
+            <div class="filter-group">
+                <label>Forma Ara</label>
+                <input type="text" id="searchInput" placeholder="Örn: Parçalı, Kırmızı..." onkeyup="filterProducts()">
+            </div>
+
+            <div class="filter-group">
+                <label>Takım Seç</label>
+                <select id="teamSelect" onchange="filterProducts()">
+                    <option value="">Tüm Takımlar</option>
+                    <optgroup label="Süper Lig Devleri">
+                        <option value="Galatasaray">Galatasaray</option>
+                        <option value="Fenerbahçe">Fenerbahçe</option>
+                        <option value="Beşiktaş">Beşiktaş</option>
+                        <option value="Trabzonspor">Trabzonspor</option>
+                    </optgroup>
+                    <optgroup label="Anadolu & Alt Ligler">
+                        <option value="Adana Demirspor">Adana Demirspor</option>
+                        <option value="Samsunspor">Samsunspor</option>
+                        <option value="Göztepe">Göztepe</option>
+                        <option value="Bursaspor">Bursaspor</option>
+                        <option value="Sakaryaspor">Sakaryaspor</option>
+                        <option value="Kocaelispor">Kocaelispor</option>
+                    </optgroup>
+                    <optgroup label="Avrupa & Dünya">
+                        <option value="Milli Takım">Milli Takım</option>
+                        <option value="Real Madrid">Real Madrid</option>
+                        <option value="Barcelona">Barcelona</option>
+                        <option value="Man City">Man City</option>
+                        <option value="Liverpool">Liverpool</option>
+                        <option value="PSG">PSG</option>
+                        <option value="Bayern">Bayern Munich</option>
+                        <option value="Inter">Inter</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Sezon</label>
+                <select id="seasonSelect" onchange="filterProducts()">
+                    <option value="">Tüm Sezonlar</option>
+                    <option value="2025">2024 - 2025 (Yeni)</option>
+                    <option value="2024">2023 - 2024</option>
+                    <option value="Retro">Retro / Efsane</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Beden</label>
+                <select id="sizeSelect" onchange="filterProducts()">
+                    <option value="">Tüm Bedenler</option>
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                </select>
+            </div>
+
+            <button class="btn-reset" onclick="resetFilters()">Filtreleri Temizle</button>
+        </aside>
+
+        <main>
+            <div style="margin-bottom:15px; color:#94a3b8">Şu an <span id="countDisplay" style="color:var(--primary); font-weight:bold">0</span> ürün listeleniyor.</div>
+            <div id="grid" class="grid"></div>
+        </main>
+    </div>
+
+    <div class="overlay" id="cartModal">
+        <div class="modal">
+            <h2 style="color:var(--primary); margin-bottom:20px; font-family:'Teko',sans-serif; font-size:2rem;">SEPETİNİZ</h2>
+            <div id="cartList"></div>
+            <button onclick="toggleCart()" style="width:100%; padding:15px; margin-top:20px; cursor:pointer; border-radius:6px; border:none; background:white; font-weight:bold; font-size:1.1rem;">ALIŞVERİŞE DÖN</button>
+        </div>
+    </div><script>
+    /* GÖRSEL SİSTEMİ HAKKINDA:
+       Aşağıdaki linkler (placehold.co) her takımın kendi renginde (GS için Sarı Kırmızı vb.)
+       otomatik görsel oluşturur. Eğer elinde gerçek bir .jpg linki varsa,
+       ilgili satırdaki "img" kısmına yapıştırabilirsin.
+    */
+    const products = [
+        // GALATASARAY (Sarı Kırmızı)
+        { id: 1, team: "Galatasaray", title: "GS 24/25 Parçalı", price: 3000, season: 2025, sizes: ["S","M","L","XL"], img: "https://placehold.co/400x500/A90432/FDB912?text=GS+Parcali+25", link: "https://www.gsstore.org" },
+        { id: 2, team: "Galatasaray", title: "GS Deplasman Beyaz", price: 2900, season: 2025, sizes: ["M","L"], img: "https://placehold.co/400x500/FFFFFF/A90432?text=GS+Beyaz", link: "https://www.gsstore.org" },
+        { id: 3, team: "Galatasaray", title: "GS Siyah Alternatif", price: 2900, season: 2025, sizes: ["L","XL"], img: "https://placehold.co/400x500/000000/FDB912?text=GS+Siyah", link: "https://www.gsstore.org" },
+        { id: 4, team: "Galatasaray", title: "GS 100. Yıl Özel", price: 4500, season: "Retro", sizes: ["M"], img: "https://placehold.co/400x500/A90432/FDB912?text=100.+YIL", link: "https://www.gsstore.org" },
+        { id: 5, team: "Galatasaray", title: "Muslera Yeşil Kaleci", price: 3200, season: 2025, sizes: ["L","XL"], img: "https://placehold.co/400x500/008000/FFFFFF?text=Muslera", link: "https://www.gsstore.org" },
+        { id: 6, team: "Galatasaray", title: "Metin Oktay Retro", price: 5000, season: "Retro", sizes: ["M","L"], img: "https://placehold.co/400x500/A90432/FDB912?text=Metin+Oktay", link: "https://www.gsstore.org" },
+
+        // FENERBAHÇE (Lacivert Sarı)
+        { id: 9, team: "Fenerbahçe", title: "FB 24/25 Çubuklu", price: 3000, season: 2025, sizes: ["S","M","L","XL"], img: "https://placehold.co/400x500/002d72/f6d308?text=FB+Cubuklu", link: "https://www.fenerium.com" },
+        { id: 10, team: "Fenerbahçe", title: "FB Lacivert Deplasman", price: 2900, season: 2025, sizes: ["M","L","XL"], img: "https://placehold.co/400x500/002d72/FFFFFF?text=FB+Lacivert", link: "https://www.fenerium.com" },
+        { id: 11, team: "Fenerbahçe", title: "FB Beyaz Forma", price: 2900, season: 2025, sizes: ["S","M"], img: "https://placehold.co/400x500/FFFFFF/002d72?text=FB+Beyaz", link: "https://www.fenerium.com" },
+        { id: 12, team: "Fenerbahçe", title: "FB Gold (Altın)", price: 2500, season: 2023, sizes: ["L"], img: "https://placehold.co/400x500/D4AF37/002d72?text=FB+Gold", link: "https://www.fenerium.com" },
+        { id: 13, team: "Fenerbahçe", title: "Lefter Sezonu Retro", price: 4800, season: "Retro", sizes: ["M"], img: "https://placehold.co/400x500/002d72/f6d308?text=Lefter+Efsane", link: "https://www.fenerium.com" },
+        { id: 14, team: "Fenerbahçe", title: "Livakovic Kaleci", price: 3200, season: 2025, sizes: ["L","XL"], img: "https://placehold.co/400x500/FFFF00/000000?text=Kaleci", link: "https://www.fenerium.com" },
+        { id: 16, team: "Fenerbahçe", title: "100. Yıl Efsane", price: 6000, season: "Retro", sizes: ["L"], img: "https://placehold.co/400x500/D4AF37/002d72?text=100.YIL", link: "https://www.fenerium.com" },
+
+        // BEŞİKTAŞ (Siyah Beyaz)
+        { id: 17, team: "Beşiktaş", title: "BJK 24/25 Beyaz", price: 2950, season: 2025, sizes: ["M","L","XL"], img: "https://placehold.co/400x500/FFFFFF/000000?text=BJK+Beyaz", link: "https://www.kartalyuvasi.com.tr" },
+        { id: 18, team: "Beşiktaş", title: "BJK Siyah Deplasman", price: 2950, season: 2025, sizes: ["S","M"], img: "https://placehold.co/400x500/000000/FFFFFF?text=BJK+Siyah", link: "https://www.kartalyuvasi.com.tr" },
+        { id: 19, team: "Beşiktaş", title: "BJK Yeşil Alternatif", price: 2950, season: 2025, sizes: ["L"], img: "https://placehold.co/400x500/006400/FFFFFF?text=BJK+Yesil", link: "https://www.kartalyuvasi.com.tr" },
+        { id: 20, team: "Beşiktaş", title: "BJK 100. Yıl", price: 5500, season: "Retro", sizes: ["M"], img: "https://placehold.co/400x500/000000/D4AF37?text=BJK+100", link: "https://www.kartalyuvasi.com.tr" },
+        { id: 21, team: "Beşiktaş", title: "Metin-Ali-Feyyaz", price: 4200, season: "Retro", sizes: ["L"], img: "https://placehold.co/400x500/FFFFFF/000000?text=MAF+Retro", link: "https://www.kartalyuvasi.com.tr" },
+        { id: 22, team: "Beşiktaş", title: "Mert Günok Kaleci", price: 3100, season: 2025, sizes: ["M","L"], img: "https://placehold.co/400x500/FF0000/FFFFFF?text=Mert+G.", link: "https://www.kartalyuvasi.com.tr" },
+
+        // TRABZONSPOR (Bordo Mavi)
+        { id: 23, team: "Trabzonspor", title: "TS Çubuklu 25", price: 2800, season: 2025, sizes: ["S","M","L"], img: "https://placehold.co/400x500/800000/0000FF?text=TS+Cubuklu", link: "https://www.tsclub.com.tr" },
+        { id: 24, team: "Trabzonspor", title: "TS Parçalı", price: 2800, season: 2025, sizes: ["M","L"], img: "https://placehold.co/400x500/800000/87CEEB?text=TS+Parcali", link: "https://www.tsclub.com.tr" },
+        { id: 25, team: "Trabzonspor", title: "TS Siyah Forma", price: 2500, season: 2024, sizes: ["L","XL"], img: "https://placehold.co/400x500/000000/800000?text=TS+Siyah", link: "https://www.tsclub.com.tr" },
+        { id: 27, team: "Trabzonspor", title: "Uğurcan Çakır Kaleci", price: 3000, season: 2025, sizes: ["M","L"], img: "https://placehold.co/400x500/FFFF00/000000?text=Ugurcan", link: "https://www.tsclub.com.tr" },
+
+        // ANADOLU & ALT LİG
+        { id: 28, team: "Adana Demirspor", title: "Mavi Şimşek", price: 2200, season: 2025, sizes: ["M","L"], img: "https://placehold.co/400x500/0000FF/ADD8E6?text=ADS+Mavi", link: "https://www.adanademirstore.com" },
+        { id: 29, team: "Adana Demirspor", title: "ADS Gold", price: 2200, season: 2025, sizes: ["S","L"], img: "https://placehold.co/400x500/D4AF37/0000FF?text=ADS+Gold", link: "https://www.adanademirstore.com" },
+        { id: 30, team: "Samsunspor", title: "Samsun Kırmızı", price: 2000, season: 2025, sizes: ["M","XL"], img: "https://placehold.co/400x500/FF0000/FFFFFF?text=Samsun", link: "https://store55.com.tr" },
+        { id: 32, team: "Göztepe", title: "Efsane Sarı", price: 2100, season: 2025, sizes: ["S","L"], img: "https://placehold.co/400x500/FFFF00/FF0000?text=GOZ+GOZ", link: "https://www.goztepe.com.tr" },
+        { id: 33, team: "Bursaspor", title: "Bursaspor Timsah", price: 1800, season: "Retro", sizes: ["L"], img: "https://placehold.co/400x500/008000/FFFFFF?text=Bursa+Timsah", link: "https://bursaspor.org.tr" },
+        { id: 34, team: "Sakaryaspor", title: "Tatangalar", price: 1400, season: 2025, sizes: ["M","L"], img: "https://placehold.co/400x500/008000/000000?text=Sakarya", link: "#" },
+        { id: 35, team: "Kocaelispor", title: "Körfez Yeşili", price: 1400, season: 2025, sizes: ["M","L"], img: "https://placehold.co/400x500/008000/000000?text=Kocaeli", link: "#" },
+
+        // MİLLİ TAKIM (Kırmızı Beyaz)
+        { id: 36, team: "Milli Takım", title: "Türkiye İç Saha", price: 3500, season: 2024, sizes: ["S","M","L","XL"], img: "https://placehold.co/400x500/FFFFFF/E30A17?text=TR+Beyaz", link: "https://shop.tff.org" },
+        { id: 37, team: "Milli Takım", title: "Türkiye Deplasman", price: 3500, season: 2024, sizes: ["M","L"], img: "https://placehold.co/400x500/E30A17/FFFFFF?text=TR+Kirmizi", link: "https://shop.tff.org" },
+        { id: 38, team: "Milli Takım", title: "2002 Retro", price: 5000, season: "Retro", sizes: ["L"], img: "https://placehold.co/400x500/FFFFFF/E30A17?text=2002+Dunya+3.", link: "https://shop.tff.org" },
+
+        // AVRUPA DEVLERİ
+        { id: 39, team: "Real Madrid", title: "Real Madrid Home", price: 4500, season: 2025, sizes: ["M","L"], img: "https://placehold.co/400x500/FFFFFF/800080?text=Real+Madrid", link: "https://shop.realmadrid.com" },
+        { id: 40, team: "Real Madrid", title: "Real Madrid Away", price: 4500, season: 2025, sizes: ["S","L"], img: "https://placehold.co/400x500/FFA500/000000?text=Real+Away", link: "https://shop.realmadrid.com" },
+        { id: 41, team: "Real Madrid", title: "Arda Güler #15", price: 4800, season: 2025, sizes: ["S","M","L"], img: "https://placehold.co/400x500/FFFFFF/800080?text=Arda+Guler", link: "https://shop.realmadrid.com" },
+        { id: 42, team: "Barcelona", title: "Barca Home", price: 4400, season: 2025, sizes: ["M","L"], img: "https://placehold.co/400x500/0000FF/FF0000?text=Barca", link: "https://store.fcbarcelona.com" },
+        { id: 43, team: "Barcelona", title: "Barca Black", price: 4400, season: 2025, sizes: ["L","XL"], img: "https://placehold.co/400x500/000000/0000FF?text=Barca+Black", link: "https://store.fcbarcelona.com" },
+        { id: 44, team: "Man City", title: "Man City Home", price: 4200, season: 2025, sizes: ["S","M","L"], img: "https://placehold.co/400x500/87CEEB/FFFFFF?text=City+Home", link: "https://shop.mancity.com" },
+        { id: 45, team: "Man City", title: "De Bruyne #17", price: 4600, season: 2025, sizes: ["M"], img: "https://placehold.co/400x500/87CEEB/FFFFFF?text=KDB+17", link: "https://shop.mancity.com" },
+        { id: 46, team: "Liverpool", title: "Liverpool Home", price: 4100, season: 2025, sizes: ["M","L"], img: "https://placehold.co/400x500/FF0000/FFFFFF?text=Liverpool", link: "https://store.liverpoolfc.com" },
+        { id: 47, team: "Liverpool", title: "Salah #11", price: 4500, season: 2025, sizes: ["M","L"], img: "https://placehold.co/400x500/FF0000/FFFFFF?text=Salah", link: "https://store.liverpoolfc.com" },
+        { id: 48, team: "PSG", title: "PSG Home", price: 4300, season: 2025, sizes: ["M","L"], img: "https://placehold.co/400x500/000080/FF0000?text=PSG", link: "https://store.psg.fr" },
+        { id: 49, team: "Bayern", title: "Bayern Home", price: 4000, season: 2025, sizes: ["M","L","XL"], img: "https://placehold.co/400x500/FF0000/800000?text=Bayern", link: "https://fcbayern.com/store" },
+        { id: 50, team: "Inter", title: "Inter Home", price: 3900, season: 2025, sizes: ["M"], img: "https://placehold.co/400x500/0000FF/000000?text=Inter", link: "https://store.inter.it" },
+        { id: 51, team: "Milan", title: "Milan Home", price: 3900, season: 2025, sizes: ["M","L"], img: "https://placehold.co/400x500/FF0000/000000?text=Milan", link: "https://store.acmilan.com" },
+        { id: 52, team: "Juventus", title: "Juventus Home", price: 3900, season: 2025, sizes: ["L"], img: "https://placehold.co/400x500/FFFFFF/000000?text=Juve", link: "https://store.juventus.com" }
+    ];
+
+    // --- MANTIK KODLARI ---
+    let cart = [];
+
+    function renderProducts() {
+        const grid = document.getElementById("grid");
+        const countDisplay = document.getElementById("countDisplay");
+        
+        const search = document.getElementById("searchInput").value.toLowerCase();
+        const team = document.getElementById("teamSelect").value;
+        const season = document.getElementById("seasonSelect").value;
+        const size = document.getElementById("sizeSelect").value;
+
+        const filtered = products.filter(p => {
+            const matchesSearch = p.title.toLowerCase().includes(search) || p.team.toLowerCase().includes(search);
+            const matchesTeam = team === "" || p.team === team;
+            const matchesSeason = season === "" || p.season == season;
+            const matchesSize = size === "" || p.sizes.includes(size);
+
+            return matchesSearch && matchesTeam && matchesSeason && matchesSize;
+        });
+
+        countDisplay.innerText = filtered.length;
+        grid.innerHTML = "";
+
+        if(filtered.length === 0) {
+            grid.innerHTML = "<h3 style='grid-column: span 3; text-align:center; color:#94a3b8;'>Aradığınız kriterde forma bulunamadı.</h3>";
+            return;
+        }
+
+        filtered.forEach(p => {
+            const sizesHtml = p.sizes.map(s => `<span class="size-badge">${s}</span>`).join("");
+            
+            const div = document.createElement("div");
+            div.className = "card";
+            div.innerHTML = `
+                <div class="season-badge">${p.season}</div>
+                <div class="img-wrap">
+                    <img src="${p.img}" class="card-img" alt="${p.title}">
+                </div>
+                <div class="card-body">
+                    <div class="team-tag">${p.team}</div>
+                    <div class="card-title">${p.title}</div>
+                    <div class="size-list">${sizesHtml}</div>
+                    <div class="card-price">${p.price.toLocaleString('tr-TR')} TL</div>
+                    <button class="btn-add" onclick="addToCart(${p.id})">SEPETE EKLE</button>
+                </div>
+            `;
+            grid.appendChild(div);
+        });
+    }
+
+    function resetFilters() {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("teamSelect").value = "";
+        document.getElementById("seasonSelect").value = "";
+        document.getElementById("sizeSelect").value = "";
+        renderProducts();
+    }
+
+    function addToCart(id) {
+        const item = products.find(p => p.id === id);
+        cart.push(item);
+        document.getElementById("cartBadge").innerText = cart.length;
+        alert("✅ " + item.title + " sepete eklendi!");
+    }
+
+    function toggleCart() {
+        const modal = document.getElementById("cartModal");
+        const listDiv = document.getElementById("cartList");
+        
+        if (modal.style.display === "flex") {
+            modal.style.display = "none";
+        } else {
+            listDiv.innerHTML = "";
+            if(cart.length === 0) {
+                listDiv.innerHTML = "<p style='color:#94a3b8; text-align:center; font-size:1.2rem;'>Sepetiniz şu an boş.</p>";
+            } else {
+                cart.forEach((item, index) => {
+                    const row = document.createElement("div");
+                    row.className = "cart-item";
+                    row.innerHTML = `
+                        <div>
+                            <div style="color:white; font-weight:bold; font-size:1.1rem;">${item.title}</div>
+                            <div style="color:#94a3b8; font-size:0.9rem;">${item.price} TL</div>
+                        </div>
+                        <div>
+                            <a href="${item.link}" target="_blank" class="btn-link">SATIN AL ➚</a>
+                            <button class="btn-del" onclick="removeFromCart(${index})">SİL</button>
+                        </div>
+                    `;
+                    listDiv.appendChild(row);
+                });
+            }
+            modal.style.display = "flex";
+        }
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        document.getElementById("cartBadge").innerText = cart.length;
+        toggleCart();
+    }
+
+    // Başlangıçta çalıştır
+    renderProducts();
+
+</script>
+</body>
+</html>
